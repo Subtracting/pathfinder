@@ -16,16 +16,13 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="styles.css" />
 </head>
-<header class="header">
-    <!-- <img src="images/orange.svg" width="30px"></img> -->
-    <div class="title">pathfinder.</div>
-</header>
+
 <body>
     <div>
-        <div class="map" id="map"></div>
-    </div>
-    <div class="wrapper">
-        <div class="first">
+        <div class="sidebar">
+            <div class="title">pathfinder.</div>
+        </div>
+        <div class="sidebar small">
             <table id="routeTable">
                 <thead id="thead">
                     <tr>
@@ -39,26 +36,30 @@
                 </div>
             </table>
         </div>
-        <div class="second">
-            <div class="form">
-                <form id="saveRouteForm">
-                    <input type="text" id="routeName" placeholder="route name...">
-                </form>
-            </div>
-            <div class="stats-div">
-                <div id="totalDist"></div>
-                <div id="totalTime"></div>
-            </div>
-        </div>
     </div>
-    <div class="button-div">
-        <button class="button-save-del" onclick="saveRoute()" value="Save"><img width=35 height=35 src="images/save.svg"/></button>
-        <button class="button-save-del" onclick="deleteRoute()" value="Delete"><img width=35 height=35 src="images/delete.svg"/></button>
-        <button class="button-save-del" onclick="exportRoute()" value="Export"><img width=35 height=35 src="images/export.svg"/></button>
-        <button class="button-save-del" onclick="routeGenerator()" value="Generate"><img width=35 height=35 src="images/shuffle.svg"/></button>
+    
+    <div class="map" id="map"></div>
+
+    <div>
+        <div class="sidebar">
+            <form id="saveRouteForm">
+                <input type="text" id="routeName" placeholder="route name...">
+            </form>
+        </div>
+        <div class="stats">
+            <div id="totalDist"></div>
+            <div id="totalTime"></div>
+        </div>
+        <div class="button-div">
+            <button class="button-save-del" onclick="saveRoute()" value="Save"><img width=35 height=35 src="images/save.svg"/></button>
+            <button class="button-save-del" onclick="deleteRoute()" value="Delete"><img width=35 height=35 src="images/delete.svg"/></button>
+            <button class="button-save-del" onclick="exportRoute()" value="Export"><img width=35 height=35 src="images/export.svg"/></button>
+            <button class="button-save-del" onclick="routeGenerator()" value="Generate"><img width=35 height=35 src="images/shuffle.svg"/></button>
+        </div>
+
     </div>
 
-          
+
 
 
     <script src="states.js"></script>
