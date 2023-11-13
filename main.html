@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>pathfinder</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MuseoModerno:ital,wght@1,900&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<header class="header">
+    <!-- <img src="images/orange.svg" width="30px"></img> -->
+    <div class="title">pathfinder.</div>
+</header>
+<body>
+    <div>
+        <div class="map" id="map"></div>
+    </div>
+    <div class="wrapper">
+        <div class="first">
+            <table id="routeTable">
+                <thead id="thead">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Distance</th>
+                    </tr>
+                </thead>
+                <div id="tableDiv">
+                    <tbody id="tableBody">                                
+                    </tbody>
+                </div>
+            </table>
+        </div>
+        <div class="second">
+            <div class="form">
+                <form id="saveRouteForm">
+                    <input type="text" id="routeName" placeholder="route name...">
+                </form>
+            </div>
+            <div class="stats-div">
+                <div id="totalDist"></div>
+                <div id="totalTime"></div>
+            </div>
+        </div>
+    </div>
+    <div class="button-div">
+        <button class="button-save-del" onclick="saveRoute()" value="Save"><img width=35 height=35 src="images/save.svg"/></button>
+        <button class="button-save-del" onclick="deleteRoute()" value="Delete"><img width=35 height=35 src="images/delete.svg"/></button>
+        <button class="button-save-del" onclick="exportRoute()" value="Export"><img width=35 height=35 src="images/export.svg"/></button>
+        <button class="button-save-del" onclick="routeGenerator()" value="Generate"><img width=35 height=35 src="images/shuffle.svg"/></button>
+    </div>
+
+          
+
+
+    <script src="states.js"></script>
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <script src="routing.js"></script>
+
+</body>
+</html>
