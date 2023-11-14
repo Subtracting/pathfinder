@@ -69,7 +69,6 @@ function routeGenerator() {
   };
   newRouteWaypoints.push(startWaypoint);
   control.setWaypoints(newRouteWaypoints);
-  console.log(newRouteWaypoints);
 }
 
 
@@ -188,9 +187,9 @@ function deleteWaypoint() {
 function createButton(label, container) {
   var btn = L.DomUtil.create('button', 'button-wp', container);
   btn.setAttribute('type', 'button');
-  btn.onclick = function(event) {
-    console.log(label, btn, event)
-  };
+  // btn.onclick = function(event) {
+  //   console.log(label, btn, event)
+  // };
   btn.innerHTML = label;
   return btn;
 }
@@ -206,13 +205,13 @@ map.on('click', (event) => {
 
 control.getPlan().on('waypointschanged', (event) => {
   routeState.currentRoute.waypoints = event.waypoints.map(a => a.latLng).filter(n => n);
-  console.log(control.getPlan());
+  // console.log(control.getPlan());
 })
 
 control.on('routesfound', (event) => {
   var totalDist = event.routes[0].summary.totalDistance / 1000;
   var totalTime = event.routes[0].summary.totalTime;
-  console.log(event);
+
   routeState.currentRoute.totalDist = totalDist;
   routeState.currentRoute.totalTime = totalTime;
   document.getElementById("totalDist").innerHTML = routeState.currentRoute.totalDist.toFixed(2) + " km";
@@ -221,16 +220,24 @@ control.on('routesfound', (event) => {
 
 var thead = document.getElementById("thead");
 var tbody = document.getElementById("tableBody");
-// var idxLastClicked = -1;
 
 tbody.onclick = function (e) {
   var td = e.target || e.srcElement;
   var row = td.parentNode;
-  row.className = row.className === "highlighted" ? "" : "highlighted";
+  var parentTable = row.parentNode.childNodes; 
   var idxRoute = row.rowIndex - 1; 
+  
+  parentTable.forEach(function(elem) {
+    elem.classList.remove("highlighted");
+  });
+
+  row.className = row.className === "highlighted" ? "" : "highlighted";
+
   routeState.currentRoute.waypoints = routeState.routeArray[idxRoute].waypoints;
   routeState.currentRoute._id = routeState.routeArray[idxRoute]._id;
-  // document.getElementById("saveRouteForm").innerHTML = routeState.currentRoute._id;
+  routeState.currentRoute.routeName = routeState.routeArray[idxRoute].name;
+
+  document.getElementById("routeName").value = routeState.currentRoute.routeName;
   control.setWaypoints(routeState.currentRoute.waypoints);
 }
 

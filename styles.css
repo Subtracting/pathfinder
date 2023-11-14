@@ -78,7 +78,6 @@ th {
     border-color: rgba(19, 20, 44, 0.192);
     background-color:rgba(46, 46, 46, 0.425);
     border-collapse: collapse;
-
 }
 
 tr:hover {
@@ -105,11 +104,12 @@ tr:hover {
 }
 
 input[type=text] {
+    display: flex;
     border: none;
     border-bottom: 3px solid rgba(19, 20, 44, 0.692);
     background-color: transparent;
     color: none;
-    font-size: 40px;
+    font-size: 30px;
     color: rgba(44, 61, 44, 0.712);
     font-family: 'Roboto', sans-serif;
     overflow: hidden;
