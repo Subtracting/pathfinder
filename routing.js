@@ -1,16 +1,19 @@
 // define variables and map
-let sortedReverse = false;
 let waypoints = [];
 let mapOptions = {
-    center: [51.49157785566285, 4.288401603698731],
+    center: routeState.mapCenter,
     zoom: 12
 };
 var idxRoute = -1;
 
+var myIcon = L.icon({
+  iconUrl: 'images/pin_route.svg',
+  iconSize: [22,22]
+});
+
 var map = L.map('map' , mapOptions);
 layer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 map.addLayer(layer);
-map.doubleClickZoom.disable(); 
 
 // define control
 var control = L.Routing.control({
@@ -29,7 +32,7 @@ var control = L.Routing.control({
   createMarker: function(i, wp) {
     return L.marker(wp.latLng, 
       {draggable: true, 
-        icon: L.icon({iconUrl: 'images/pin.svg', iconSize: [22, 22]})
+        icon: L.icon({iconUrl: routeState.marker, iconSize: [22, 22]})
       }).on('click', function(e) { 
         var container = L.DomUtil.create('div', 'button-container');
         deleteButton = createButton('delete waypoint', container);
@@ -71,30 +74,40 @@ function routeGenerator() {
   control.setWaypoints(newRouteWaypoints);
 }
 
+// show saved routes toggle
+function showRoutes() {
+  var markerArray = [];
+  control.setWaypoints();
 
-// gpx export
-function createXmlString(waypoints) {
-  let result = '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \
-    xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" \
-    creator="runtracker"><metadata/><trk><name></name><desc></desc>'
-  result += waypoints.reduce((accum, waypoint) => {
-      let segmentTag = `<trkseg><trkpt lat="${waypoint.lat}" lon="${waypoint.lng}"></trkpt></trkseg>`
-      return accum += segmentTag;
-    }, '');
-  result += '</trk></gpx>';
-  return result;
+  let startWayPoints = routeState.routeArray.map(function(x) {
+    return x.waypoints[0];
+  });
+  
+  startWayPoints.forEach(function(waypoint) {
+    let marker = L.marker(waypoint, {icon: myIcon});
+    marker.addTo(map);
+    marker.on('click', function(e) {
+      let selectedRouteId = '';
+      routeState.routeArray.forEach(function(route) {
+        if (route.waypoints[0].lat === e.latlng.lat && route.waypoints[0].lng === e.latlng.lng) {
+          selectedRouteId = route._id;
+        };
+      });
+
+      markerArray.forEach(function(marker) {
+        map.removeLayer(marker);
+      });
+
+      console.log(selectedRouteId);
+
+      control.setWaypoints(routeState.routeArray.find(x => x._id === selectedRouteId).waypoints);
+      
+    });
+    markerArray.push(marker);
+  });
+
+
 }
-
-function exportRoute() {
-  var waypoints = routeState.currentRoute.waypoints;
-  const xml = createXmlString(waypoints);
-  const url = 'data:text/json;charset=utf-8,' + xml;
-  const link = document.createElement('a');
-  link.download = `${'test_export'}.gpx`;
-  link.href = url;
-  document.body.appendChild(link);
-  link.click();
-};
 
 
 // define functions
@@ -180,10 +193,6 @@ window.onload = async function() {
   }
 }
 
-function deleteWaypoint() {
-  control.spliceWaypoints();
-}
-
 function createButton(label, container) {
   var btn = L.DomUtil.create('button', 'button-wp', container);
   btn.setAttribute('type', 'button');
@@ -226,6 +235,7 @@ tbody.onclick = function (e) {
   var row = td.parentNode;
   var parentTable = row.parentNode.childNodes; 
   var idxRoute = row.rowIndex - 1; 
+  let autoMoved = true
   
   parentTable.forEach(function(elem) {
     elem.classList.remove("highlighted");
@@ -238,7 +248,17 @@ tbody.onclick = function (e) {
   routeState.currentRoute.routeName = routeState.routeArray[idxRoute].name;
 
   document.getElementById("routeName").value = routeState.currentRoute.routeName;
-  control.setWaypoints(routeState.currentRoute.waypoints);
+  map.flyToBounds(routeState.currentRoute.waypoints, {
+    animate: true,
+    duration: 1.5
+  });
+  map.on('moveend', function(){
+    if (autoMoved === true) {
+      control.setWaypoints(routeState.currentRoute.waypoints);
+      autoMoved = false;
+      }
+    });
+  map.fitBounds(routeState.currentRoute.waypoints);
 }
 
 thead.onclick = function (e) {
