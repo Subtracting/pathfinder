@@ -12,7 +12,7 @@ function createXmlString(waypoints) {
   }
   
 function exportRoute() {
-    var waypoints = routeState.currentRoute.waypoints;
+    var waypoints = routeState.currentRoute.coordinates;
     const xml = createXmlString(waypoints);
     const url = 'data:text/json;charset=utf-8,' + xml;
     const link = document.createElement('a');

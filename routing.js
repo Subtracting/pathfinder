@@ -234,11 +234,15 @@ control.getPlan().on('waypointschanged', (event) => {
 control.on('routesfound', (event) => {
   var totalDist = event.routes[0].summary.totalDistance / 1000;
   var totalTime = event.routes[0].summary.totalTime;
+  var coordinates =  event.routes[0].coordinates;
 
   routeState.currentRoute.totalDist = totalDist;
   routeState.currentRoute.totalTime = totalTime;
+  routeState.currentRoute.coordinates = coordinates;
+
   document.getElementById("totalDist").innerHTML = routeState.currentRoute.totalDist.toFixed(2) + " km";
   document.getElementById("totalTime").innerHTML = routeState.currentRoute.totalTime + " sec";
+
 })
 
 var thead = document.getElementById("thead");
