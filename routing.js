@@ -12,8 +12,22 @@ var myIcon = L.icon({
 });
 
 var map = L.map('map' , mapOptions);
-layer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+layer = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {keepBuffer: 100});
 map.addLayer(layer);
+
+// layer2 = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+//     attribution: 'prevent flickering',
+//     // maxZoom: 18
+// }).addTo(map);
+
+// map.on('load', function(e) {
+//   layer2.bringToFront();
+//   layer.on('load', function(e) {
+//       console.log('loaded');
+//       layer.bringToFront();
+//   });
+//   layer.redraw();
+// });
 
 // define control
 var control = L.Routing.control({
