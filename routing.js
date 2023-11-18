@@ -5,6 +5,7 @@ let mapOptions = {
     zoom: 12
 };
 var idxRoute = -1;
+var markerArray = [];
 
 var myIcon = L.icon({
   iconUrl: 'images/pin_route.svg',
@@ -64,12 +65,13 @@ var control = L.Routing.control({
 }).addTo(map);
 
 
+
 // route generator
 function routeGenerator() {
   let startWaypoint = mapOptions.center;
   let lat = startWaypoint[0];
   let lon = startWaypoint[1];
-  const routeDist =10/10;
+  const routeDist = 10/10;
   const n = 3;
   let sign = Math.random();
   let newRouteWaypoints = [[lat,lon]];
@@ -88,14 +90,22 @@ function routeGenerator() {
   control.setWaypoints(newRouteWaypoints);
 }
 
+function updateScreen(waypoints) {
+  markerArray.forEach(function(marker) {
+    map.removeLayer(marker);
+  });  
+  map.fitBounds(waypoints);
+}
+
 // show saved routes toggle
 function showRoutes() {
-  var markerArray = [];
   control.setWaypoints();
 
   let startWayPoints = routeState.routeArray.map(function(x) {
     return x.waypoints[0];
   });
+
+  map.fitBounds(startWayPoints);
   
   startWayPoints.forEach(function(waypoint) {
     let marker = L.marker(waypoint, {icon: myIcon});
@@ -107,22 +117,14 @@ function showRoutes() {
           selectedRouteId = route._id;
         };
       });
-
-      markerArray.forEach(function(marker) {
-        map.removeLayer(marker);
-      });
-
-      console.log(selectedRouteId);
-
-      control.setWaypoints(routeState.routeArray.find(x => x._id === selectedRouteId).waypoints);
-      
+      let waypoints = routeState.routeArray.find(x => x._id === selectedRouteId).waypoints;
+      control.setWaypoints(waypoints);
+      updateScreen(waypoints);
     });
+    
     markerArray.push(marker);
   });
-
-
 }
-
 
 // define functions
 async function deleteRoute() {
@@ -139,7 +141,6 @@ async function deleteRoute() {
 
   fetchSetRoutes(`http://localhost:4000/api/routes`);    
 };
-
 
 async function saveRoute() {
   var route = control.getWaypoints().map(x => x.latLng); 
@@ -162,7 +163,6 @@ async function saveRoute() {
 
   fetchSetRoutes(`http://localhost:4000/api/routes`);    
 };
-
 
 async function getAllRoutes(url) {
   let response = await fetch(url);
@@ -194,7 +194,6 @@ function setRouteList() {
 }
 
 async function fetchSetRoutes (url) {
-
   await getAllRoutes(url);
   setRouteList();
 }
@@ -203,16 +202,12 @@ async function fetchSetRoutes (url) {
 window.onload = async function() {
   if (typeof window.localStorage !== "undefined") {
     fetchSetRoutes(`http://localhost:4000/api/routes`);
-    localStorage.setItem('first_load', true);
   }
 }
 
 function createButton(label, container) {
   var btn = L.DomUtil.create('button', 'button-wp', container);
   btn.setAttribute('type', 'button');
-  // btn.onclick = function(event) {
-  //   console.log(label, btn, event)
-  // };
   btn.innerHTML = label;
   return btn;
 }
@@ -228,7 +223,6 @@ map.on('click', (event) => {
 
 control.getPlan().on('waypointschanged', (event) => {
   routeState.currentRoute.waypoints = event.waypoints.map(a => a.latLng).filter(n => n);
-  // console.log(control.getPlan());
 })
 
 control.on('routesfound', (event) => {
@@ -276,16 +270,30 @@ tbody.onclick = function (e) {
       autoMoved = false;
       }
     });
-  map.fitBounds(routeState.currentRoute.waypoints);
+  updateScreen(routeState.currentRoute.waypoints);
 }
 
 thead.onclick = function (e) {
   var head = e.target.firstChild.nodeValue;
-  if (head == 'Route') {
-    routeState.routeArray.reverse((a, b) => a.name.localeCompare(b.name));
+  if (head == 'Name') {
+    if (routeState.name_sorted_abc == false) {
+      routeState.routeArray.sort((a, b) => a.name.localeCompare(b.name));
+      routeState.name_sorted_abc = true;
+    }
+    else {
+      routeState.routeArray.reverse((a, b) => a.name.localeCompare(b.name));
+      routeState.name_sorted_abc = false;
+    }
   }
   else {
-    routeState.routeArray.reverse((a, b) => a.totalDistance.localeCompare(b.totalDistance));
+    if (routeState.distance_sorted_abc == false) {
+      routeState.routeArray.sort((a,b) => a.totalDist < b.totalDist);
+      routeState.distance_sorted_abc = true;
+    }
+    else {
+      routeState.routeArray.sort((a,b) => a.totalDist > b.totalDist);
+      routeState.distance_sorted_abc = false;
+    }
   }
   setRouteList();
 }
